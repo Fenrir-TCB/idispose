@@ -1,0 +1,38 @@
+#include <Servo.h>
+
+Servo servoMotor;      // Créez un objet Servo pour contrôler le servomoteur
+const int trigPin = 11; // Broche de déclenchement du capteur ultrasonique
+const int echoPin = 10; // Broche de réception du capteur ultrasonique
+long duration;
+int distance;
+
+void setup() {
+  servoMotor.attach(9);  // Attachez le servomoteur à la broche 6
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);   // Initialisez la communication série pour le débogage
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Si la distance est inférieure à 20 cm, actionnez le servomoteur
+  if (distance < 20) {
+    servoMotor.write(180); // Faites tourner le servomoteur à 90 degrés
+    delay(1000);          // Attendez 1 seconde
+    servoMotor.write(0);  // Ramenez le servomoteur à 0 degré
+  }
+  delay(10);
+}
